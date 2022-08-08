@@ -1,0 +1,14 @@
+build/*
+dist/*
+archive/*
+.gradle/*
+testing/*
+**/nbproject/private/
+**/nbproject/Makefile-*.mk
+**/nbproject/Package-*.bash
+nbbuild/*
+nbdist/*
+nbproject/*
+.nb-gradle/*
+Lethality_Examples*
+*env.bat*
