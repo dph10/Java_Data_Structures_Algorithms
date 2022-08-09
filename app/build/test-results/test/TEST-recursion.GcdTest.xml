@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="recursion.GcdTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2022-08-08T18:42:08" hostname="E40-DHOLDEN2-LT" time="0.0">
-  <properties/>
-  <testcase name="test1()" classname="recursion.GcdTest" time="0.0"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

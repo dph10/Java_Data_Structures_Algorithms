@@ -1,6 +1,9 @@
 build/*
+app/build/*
 dist/*
+app/dist/*
 archive/*
+app/archive/*
 .gradle/*
 testing/*
 **/nbproject/private/
