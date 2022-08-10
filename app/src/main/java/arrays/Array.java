@@ -12,7 +12,7 @@ import java.util.Objects;
  *
  * @author daniel.holden.reg
  */
-public class Array<T> {
+public class Array<T> implements ListInterface<T> {
     
     private int capacity;   
     private int length = 0;
@@ -38,14 +38,22 @@ public class Array<T> {
         }
     }
     
+    @Override
     public int length() {
         return this.length;
     }
     
+    @Override
+    public boolean isEmpty() {
+        return this.length==0;
+    }
+    
+    @Override
     public int capacity() {
         return this.capacity;
     }
     
+    @Override
     public void add(final T el) {
         this.array[this.length++] = el;
         
@@ -54,6 +62,7 @@ public class Array<T> {
         } 
     }
     
+    @Override
     public T get(final int index) {
         if (index<0 || index >= this.length) {
             throw new IndexOutOfBoundsException(new StringBuilder("Request index ")
@@ -65,6 +74,7 @@ public class Array<T> {
         return this.array[index];
     }
     
+    @Override
     public void add(final T el, final int index) {
         if (index > this.length || index <0) {
             throw new IndexOutOfBoundsException(new StringBuilder("Request index ")
@@ -86,18 +96,20 @@ public class Array<T> {
         }
     }
     
+    @Override
     public void addAll(final Collection<T> objs) {
         for (final var obj : objs) {
             this.add(obj);
         }
     }
     
+    @Override
     public void addAll(final T[] objs) {
         for (final var obj : objs) {
             this.add(obj);
         }
     }
-    
+
     protected void resizeArray(final int size) {
         final T[] newArray = (T[]) new Object[size];
         
@@ -110,6 +122,7 @@ public class Array<T> {
         this.capacity = size;
     }
     
+    @Override
     public int clear() {
         
         final int currentLength = this.length;
@@ -125,6 +138,7 @@ public class Array<T> {
         
     }
     
+    @Override
     public boolean contains(final T el) {
         for (int ii=0; ii<this.length; ii++) {
             if (Objects.equals(this.array[ii], el)) {
@@ -134,7 +148,8 @@ public class Array<T> {
         return false;
     }
     
-    public void remove(final int index) {
+    @Override
+    public T remove(final int index) {
         
         if (index<0 || index>= this.length) {
              throw new IndexOutOfBoundsException(new StringBuilder("Request index ")
@@ -142,7 +157,7 @@ public class Array<T> {
                     .append(" must be greater than or equal to zero and less than the array length ")
                     .append(this.length).toString());
         }
-        
+        final T returnVal = this.array[index];
         this.array[index] = null;
         for (int ii=index+1; ii<this.length; ii++) {
             this.array[ii-1] = this.array[ii];
@@ -151,9 +166,10 @@ public class Array<T> {
         if (--this.length < this.capacity/4) {
             this.resizeArray(this.capacity/2);
         }        
-        
+        return returnVal;
     }
     
+    /*@Override
     public int remove(final T el) {
         
         int index = 0;
@@ -168,12 +184,9 @@ public class Array<T> {
             this.remove(index);
             return index;
         }
-    }
+    }*/
     
-    public void push(final T el) {
-        this.add(el);
-    }
-    
+    @Override
     public T pop() {
         if (this.length==0) {
             return null;
@@ -184,11 +197,12 @@ public class Array<T> {
         return val;
     }
     
+    @Override
     public Iterator<T> iterator() {
         return new ArrayIterator<>(this);
     }
     
-    public static class ArrayIterator<T> implements Iterator {
+    public static class ArrayIterator<T> implements Iterator<T> {
         
         private final Array<T> array;
         private int currentIndex = -1;        
@@ -203,13 +217,15 @@ public class Array<T> {
         }
 
         @Override
-        public Object next() {
+        public T next() {
             return this.array.get(++this.currentIndex);
         }
 
         @Override
         public void remove() {
-            this.array.remove(this.currentIndex--);
+            if (this.currentIndex>=0) {
+                this.array.remove(this.currentIndex--);
+            }
         }  
     }
     

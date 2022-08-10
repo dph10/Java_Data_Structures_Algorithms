@@ -4,6 +4,7 @@
  */
 package arrays.testproblems;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -93,7 +94,7 @@ public class ArrayPairs {
 
             final var list = intMap.get(val1);
             if (list==null) {
-                final var newList = new LinkedList<Integer>();
+                final var newList = new ArrayList<Integer>();
                 newList.add(ii);
                 intMap.put(val1, newList);
             } else {
