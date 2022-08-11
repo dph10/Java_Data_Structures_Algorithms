@@ -229,4 +229,9 @@ public class Array<T> implements ListInterface<T> {
         }  
     }
     
+    @Override
+    public final String toString() {
+        return ListInterface.toString(this);
+    }
+    
 }

@@ -4,6 +4,7 @@
  */
 package arrays;
 
+import java.util.Set;
 import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Disabled;
@@ -113,7 +114,7 @@ public class DoubleLinkedListTest {
     @Test
     public void testRemoveIndex() {
         
-        final var arr = new DoubleLinkedList<>();
+        final var arr = new DoubleLinkedList<Integer>();
         
         final Integer[] intArr0 = {1,2,3,10};        
         arr.addAll(intArr0);
@@ -151,7 +152,7 @@ public class DoubleLinkedListTest {
     
     @Test
     public void testRemoveObj() {
-        final var arr = new DoubleLinkedList<>();
+        final var arr = new DoubleLinkedList<Integer>();
         final Integer[] intArr0 = {1,2,3,10};        
         arr.addAll(intArr0);
         
@@ -168,7 +169,7 @@ public class DoubleLinkedListTest {
     
     @Test
     public void testRemoveIterator() {
-        final var arr = new DoubleLinkedList<>();
+        final var arr = new DoubleLinkedList<Integer>();
         final Integer[] intArr0 = {1,2,3,10}; 
         
         arr.addAll(intArr0);
@@ -238,6 +239,97 @@ public class DoubleLinkedListTest {
         assertNull(queue.peekTail());
         
         assertNull(queue.remove());
+    }
+    
+    @Test
+    public void testToString() {
+        final var arr = new int[]{-1, 3, 10, 23};
+        
+        final var list = new DoubleLinkedList<Integer>();
+        for (final var val : arr) {
+            list.add(val);
+        }
+        
+        assertEquals("[-1, 3, 10, 23]", list.toString());
+    }
+    
+    @Test
+    public void testRemoveDuplicates() {
+        final int[] array = {-10, 0, -1, 3, 4, 0, 1, 2, 3, 20, 33, 20};
+        final int[] arrayUnique = {-10, 0, -1, 3, 4, 1, 2, 20, 33};
+        
+        final var list = new DoubleLinkedList<Integer>();
+        assertEquals(0, list.removeDuplicates());
+        for (final var val  : array) {
+            list.push(val);
+        }
+        
+        assertEquals(array.length - arrayUnique.length, list.removeDuplicates());
+        
+        final var itr = list.iterator();
+        for (final var val : arrayUnique) {
+            assertEquals(val, itr.next());
+        }
+    }
+    
+    @Test
+    public void testGetNthFromLast() {
+        final int[] array = {-10, 2, 0, 4,-1};
+        
+        final var list = new DoubleLinkedList<Integer>();
+        
+        for (final int val : array) {
+            list.push(val);
+        }
+        
+        assertEquals(-1, list.getNthFromLast(0));
+        assertEquals(4, list.getNthFromLast(1));
+        assertEquals(0, list.getNthFromLast(2));
+        assertEquals(2, list.getNthFromLast(3));
+        assertEquals(-10, list.getNthFromLast(4));
+    }
+    
+    @Test
+    public void testPartitionAroundX() {
+        // test --tests *DoubleLinkedListTest.testPartitionAroundX --debug-jvm
+        final int[] array = {3, 5, 8, 5, 10, 2, 1};
+        final var list = new DoubleLinkedList<Integer>();
+        for (final var val : array) {
+            list.push(val);
+        }
+        
+        list.partitionAroundX(5);
+        assertEquals(1, list.peek());
+        assertEquals(10, list.peekTail());
+        System.out.println(list.toString());
+    }
+    
+    @Test
+    public void testFindUnion() {
+        
+        final int[] arr1 = IntStream.rangeClosed(0, 100).toArray();
+        final int[] arr2 = IntStream.rangeClosed(80, 200).toArray();
+        
+        final var list1 = new DoubleLinkedList<Integer>();
+        final var list2 = new DoubleLinkedList<Integer>();
+        
+        for (final int val : arr1) {
+            list1.push(val);
+        }
+        
+        for (final int val: arr2) {
+            list2.push(val);
+        }
+        
+        final Set<Integer> union = ListInterface.findUnion(list1, list2);
+        
+        assertEquals(21, union.size());
+        
+        for (int ii=80; ii<=100; ii++) {
+            assertTrue(union.contains(ii));
+        }
+        
+        System.out.println("union: " + union);
     }
 
 }

@@ -5,13 +5,16 @@
 package arrays;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  *
  * @author daniel.holden.reg
  */
-public class DoubleLinkedList<T> implements ListInterface<T>, Queue<T> {
+public class DoubleLinkedList<T extends Comparable<T>> implements ListInterface<T>, Queue<T> {
     
     private int length;
     
@@ -236,7 +239,7 @@ public class DoubleLinkedList<T> implements ListInterface<T>, Queue<T> {
        return this.length;
     }
     
-    public static class LinkedListIterator<T> implements Iterator<T> {
+    public static class LinkedListIterator<T extends Comparable<T>> implements Iterator<T> {
         
         private final DoubleLinkedList<T> list;
         private Node<T> currentNode=null;
@@ -314,7 +317,112 @@ public class DoubleLinkedList<T> implements ListInterface<T>, Queue<T> {
             return this.head.value;
         } else {
             return this.tail.value;
+        }        
+    }
+    
+    @Override
+    public final String toString() {
+        return ListInterface.toString(this);
+    }
+    
+    public int removeDuplicates() {
+        if (this.length>1) {
+            final Iterator<T> itr = this.iterator();
+            
+            final var uniqueSet = new HashSet<T>();
+            int numDuplicates=0;
+            while(itr.hasNext()) {
+                final var val = itr.next();
+                if(!uniqueSet.add(val)) {
+                    itr.remove();
+                    numDuplicates++;
+                }
+            }
+
+            return numDuplicates;
+        } else {
+            return 0;
         }
+    }
+    
+    /**
+     * 
+     * @param nthFromLast index from the last element, last element is 0
+     * @return 
+     */
+    public T getNthFromLast(final int nthFromLast) {
+        if (nthFromLast < 0 || nthFromLast >= this.length) {
+            throw new IndexOutOfBoundsException(new StringBuilder("Request index ")
+                    .append(nthFromLast)
+                    .append(" must be greater than or equal to zero and less than the array length ")
+                    .append(this.length).toString());
+        }
+        if (length == 1) {
+            return this.head.value;
+        }
+        
+        Node<T> currentNode = this.tail;
+        for (int ii=0; ii<nthFromLast; ii++) {
+            currentNode = currentNode.previousNode;
+        }
+        return currentNode.getValue();
+    }
+    
+    public void partitionAroundX(final T value) {
+        
+        if (this.length>1) {
+            Node<T> currentNode  = this.head;
+            
+            while(currentNode.nextNode!=null) {
+                
+                final Node<T> nextNode = currentNode.nextNode;
+                
+                if (nextNode.value.compareTo(value)<0) {
+                    
+                    currentNode.nextNode = nextNode.nextNode;                    
+                    if(nextNode.nextNode!=null) {
+                        nextNode.nextNode.previousNode = currentNode;
+                    }
+                    
+                    this.head.previousNode = nextNode;
+                    nextNode.previousNode=null;
+                    nextNode.nextNode = this.head;
+                    this.head = nextNode;
+                    
+                } else {
+                    currentNode = nextNode;
+                }
+            }      
+            this.tail = currentNode;
+            
+        }
+        
+    }
+    
+    /**
+     * This is the most efficient implementation, linking the head of 
+     * {@code listToAppend} to the tail of this list.  This means the both lists
+     * will now contain references to the same objects and nodes, so it is recommended
+     * to not use the appended list after executing this method.
+     * @param listToAppend 
+     */
+    public void appendLinkedList(final DoubleLinkedList<T> listToAppend) {
+        
+        if (this.length==0) {
+            this.head = listToAppend.head;
+            this.tail = listToAppend.tail;
+            this.length = listToAppend.length;
+        }
+        
+        if (listToAppend.isEmpty()) {
+            return;
+        }
+        
+        this.length+=listToAppend.length;
+        
+        this.tail.nextNode = listToAppend.head;
+        listToAppend.head.previousNode = this.tail;
+        this.tail = listToAppend.tail;
         
     }
 }

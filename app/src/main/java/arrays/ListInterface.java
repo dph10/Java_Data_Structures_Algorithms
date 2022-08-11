@@ -5,14 +5,15 @@
 package arrays;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  *
  * @author daniel.holden.reg
  */
-public interface ListInterface<T> extends StackInterface<T>{
-
+public interface ListInterface<T> extends StackInterface<T>, Iterable<T>{
     
     public int capacity();
     
@@ -82,12 +83,61 @@ public interface ListInterface<T> extends StackInterface<T>{
     public default boolean isEmpty() {
         return this.length()==0;
     }
-    
-    public Iterator<T> iterator();
-    
+
     public T get(final int index);
     
     public default int size() {
         return this.length();
+    }
+
+    public static <T> String toString(final ListInterface<T> list) {
+        final StringBuilder sb = new StringBuilder("[");
+        
+        final var itr = list.iterator();
+        while(itr.hasNext()) {
+            final var val = itr.next();            
+            sb.append(val.toString()).append(", ");
+        }
+        
+        sb.replace(sb.length()-2, sb.length(), "");        
+        sb.append("]");
+        return sb.toString();
+    }
+    
+    public static <T extends Comparable<T>> Set<T> findUnion(final ListInterface<T> l1, final ListInterface<T> l2) {
+
+        final Set<T> solution = new HashSet<>();
+
+        if (l1 == null || l1.isEmpty()) {
+            return solution;
+        } else if (l2 == null || l2.isEmpty()) {
+            return solution;
+        }
+
+        final Set<T> temp = new HashSet<>();
+
+        {
+            final Iterator<T> itr1 = l1.iterator();
+            while (itr1.hasNext()) {
+                solution.add(itr1.next());
+            }
+
+            final Iterator<T> itr2 = l2.iterator();
+            while (itr2.hasNext()) {
+                temp.add(itr2.next());
+            }
+        }
+
+        final Iterator<T> itrSol = solution.iterator();
+
+        while (itrSol.hasNext()) {
+            final T val = itrSol.next();
+            if (!temp.contains(val)) {
+                itrSol.remove();
+            }
+        }
+
+        return solution;
+
     }
 }

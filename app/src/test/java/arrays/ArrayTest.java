@@ -211,5 +211,17 @@ public class ArrayTest {
             assertEquals(intArr1[ii], arr.get(ii));
         }
     }
+    
+    @Test
+    public void testToString() {
+        final var arr = new int[]{-1, 3, 10, 23};
+
+        final var list = new Array<Integer>();
+        for (final var val : arr) {
+            list.add(val);
+        }
+
+        assertEquals("[-1, 3, 10, 23]", list.toString());
+    }
 
 }
