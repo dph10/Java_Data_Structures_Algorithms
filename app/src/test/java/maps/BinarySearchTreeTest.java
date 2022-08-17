@@ -244,7 +244,7 @@ public class BinarySearchTreeTest {
         testTree = new BinarySearchTree<>();
         buildTree(testTree);
         
-        final var keyList = testTree.keys();
+        List<Integer> keyList = (List<Integer>) testTree.keys();
         
         int previouValue = Integer.MIN_VALUE;
         
@@ -252,6 +252,15 @@ public class BinarySearchTreeTest {
             assertTrue(val > previouValue);
             previouValue = val;
         }
+        
+        keyList = (List<Integer>)testTree.keys(8, 16);
+        previouValue = 7;
+        for (final int val : keyList) {
+            assertTrue(val > previouValue);
+            assertTrue(val <= 16);
+            previouValue = val;
+        }
+        assertEquals(keyList.get(keyList.size()-1), 15);
     }
     
     @Test

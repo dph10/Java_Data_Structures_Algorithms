@@ -259,7 +259,7 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
         return this.get(key)!=null;
     }
     
-    @Override
+    /*@Override
     public int rank(final K keyRank) {        
         return this.rankInternal(this.root, keyRank);        
     }
@@ -276,7 +276,7 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
         else {
             return sizeInternal(nodeCheck.leftChildNode);
         }
-    }
+    }*/
     
     @Override
     public V remove(final K key) {
