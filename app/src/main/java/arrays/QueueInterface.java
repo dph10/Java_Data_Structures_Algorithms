@@ -8,17 +8,24 @@ package arrays;
  *
  * @author daniel.holden.reg
  */
-public interface Queue<T> {
+public interface QueueInterface<T> {
     
-    public void add(final T el);
+    public boolean add(final T el);
     
     public boolean isEmpty();
     
-    public T remove();
+    public T deQueue();
     
     public T peek();
     
     public T peekTail();
     
     public int length();
+    
+    public int capacity();
+    
+    public boolean isFull();
+    
+    public int clear();
+
 }

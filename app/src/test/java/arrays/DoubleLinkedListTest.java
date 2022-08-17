@@ -195,7 +195,7 @@ public class DoubleLinkedListTest {
     
     @Test
     public void queueTest() {
-        final Queue<Integer> queue = new DoubleLinkedList<>();
+        final QueueInterface<Integer> queue = new DoubleLinkedList<>();
         assertEquals(0, queue.length());
         assertTrue(queue.isEmpty());
         
@@ -218,27 +218,27 @@ public class DoubleLinkedListTest {
         assertEquals(4, queue.peekTail());
         
         // remove elements
-        assertEquals(-10, queue.remove());
+        assertEquals(-10, queue.deQueue());
         assertEquals(3, queue.length());
         assertEquals(3, queue.peek());
         assertEquals(4, queue.peekTail());
         
-        assertEquals(3, queue.remove());
+        assertEquals(3, queue.deQueue());
         assertEquals(2, queue.length());
         assertEquals(0, queue.peek());
         assertEquals(4, queue.peekTail());
         
-        assertEquals(0, queue.remove());
+        assertEquals(0, queue.deQueue());
         assertEquals(1, queue.length());
         assertEquals(4, queue.peek());
         assertEquals(4, queue.peekTail());
         
-        assertEquals(4, queue.remove());
+        assertEquals(4, queue.deQueue());
         assertEquals(0, queue.length());
         assertNull(queue.peek());
         assertNull(queue.peekTail());
         
-        assertNull(queue.remove());
+        assertNull(queue.deQueue());
     }
     
     @Test

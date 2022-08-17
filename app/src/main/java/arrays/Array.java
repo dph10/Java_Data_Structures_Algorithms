@@ -54,12 +54,14 @@ public class Array<T> implements ListInterface<T> {
     }
     
     @Override
-    public void add(final T el) {
+    public boolean add(final T el) {
         this.array[this.length++] = el;
         
         if (this.length > this.capacity/2) {
             this.resizeArray(this.capacity*2);
         } 
+        
+        return true;
     }
     
     @Override

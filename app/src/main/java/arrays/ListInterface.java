@@ -17,7 +17,7 @@ public interface ListInterface<T> extends StackInterface<T>, Iterable<T>{
     
     public int capacity();
     
-    public void add(final T el);
+    public boolean add(final T el);
     
     public void add(final T el, final int index);
     

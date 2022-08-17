@@ -4,17 +4,14 @@
  */
 package arrays;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  *
  * @author daniel.holden.reg
  */
-public class DoubleLinkedList<T extends Comparable<T>> implements ListInterface<T>, Queue<T> {
+public class DoubleLinkedList<T extends Comparable<T>> implements ListInterface<T>, QueueInterface<T> {
     
     private int length;
     
@@ -26,6 +23,11 @@ public class DoubleLinkedList<T extends Comparable<T>> implements ListInterface<
     public DoubleLinkedList(final T firstVal) {
         this.head = new Node<>(firstVal);
         this.length=1;
+    }
+
+    @Override
+    public boolean isFull() {
+        return false;
     }
     
     static class Node<T> {
@@ -50,7 +52,7 @@ public class DoubleLinkedList<T extends Comparable<T>> implements ListInterface<
     }
 
     @Override
-    public void add(final T el) {
+    public boolean add(final T el) {
         if (this.head==null) {
             this.head = new Node<>(el);
         } else {
@@ -66,6 +68,7 @@ public class DoubleLinkedList<T extends Comparable<T>> implements ListInterface<
             this.tail=newNode;
         }
         this.length++;
+        return true;
     }
 
     @Override
@@ -293,7 +296,7 @@ public class DoubleLinkedList<T extends Comparable<T>> implements ListInterface<
     
     
     @Override
-    public T remove() {
+    public T deQueue() {
         if (this.length==0) {
             return null;
         }
