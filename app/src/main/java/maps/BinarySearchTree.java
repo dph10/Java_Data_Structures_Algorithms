@@ -5,6 +5,8 @@
 package maps;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
 
@@ -25,9 +27,9 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
         private final V value;
         private final K key;
         
-        private Node leftChildNode;  // subtree for children less than this node's key
-        private Node rightChildNode; // subtree for children greater than this node's key
-        private Node parentNode;
+        private Node<K,V> leftChildNode;  // subtree for children less than this node's key
+        private Node<K,V> rightChildNode; // subtree for children greater than this node's key
+        private Node<K,V> parentNode;
         
         private int sizeN = 1;
         
@@ -47,23 +49,23 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
             }
         }
 
-        public K getKey() {
+        protected K getKey() {
             return key;
         }
 
-        public V getValue() {
+        protected V getValue() {
             return value;
         }
 
-        public Node getParentNode() {
+        protected Node<K,V> getParentNode() {
             return parentNode;
         }
 
-        public Node getLeftChildNode() {
+        protected Node<K,V> getLeftChildNode() {
             return leftChildNode;
         }
 
-        public Node getRightChildNode() {
+        protected Node<K,V> getRightChildNode() {
             return rightChildNode;
         }
         
@@ -71,15 +73,15 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
             return this.leftChildNode!=null;
         }
         
-        public boolean hasRightChild() {
+        protected boolean hasRightChild() {
             return this.rightChildNode != null;
         }
         
-        public boolean noChildren() {
+        protected boolean noChildren() {
             return this.leftChildNode==null && this.rightChildNode==null;
         }
         
-        public int size() {
+        protected int size() {
             return this.sizeN;
         }
 
@@ -109,6 +111,12 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
             return Objects.equals(this.key, other.key);
         }
         
+        @Override
+        public String toString() {
+            return new StringBuilder(this.key.toString())
+                    .append("=").append(this.value.toString())
+                    .toString();
+        }
     }
 
     @Override
@@ -311,20 +319,22 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
             
             // if there are two children, choose its successor
             final Node<K,V> succesorNode = getMinNode(nodeCheck.rightChildNode);
-            succesorNode.leftChildNode=nodeCheck.leftChildNode;
-            succesorNode.leftChildNode.parentNode = succesorNode;
             
             succesorNode.rightChildNode = deleteMin(nodeCheck.rightChildNode);
             if (succesorNode.rightChildNode!=null) {
                 succesorNode.rightChildNode.parentNode=succesorNode;
             }            
+            succesorNode.leftChildNode=nodeCheck.leftChildNode;
+            succesorNode.leftChildNode.parentNode = succesorNode;
+            succesorNode.sizeN = 1 + sizeInternal(succesorNode.leftChildNode) + 
+                    sizeInternal(succesorNode.rightChildNode);
             return succesorNode;
         }
     }
     
     @Override
     public Iterable<K> keys(final K low, final K high) {
-        final Queue<K> itr = new ArrayDeque<>();
+        final ArrayList<K> itr = new ArrayList<>();
         
         this.keys(root, itr, low, high);       
         return itr;
@@ -334,7 +344,7 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
         return this.root;
     }
     
-    private void keys(final Node<K,V> node, final Queue<K> queue, final K low, final K high) {
+    private void keys(final Node<K,V> node, final List<K> queue, final K low, final K high) {
         if (node==null) {
             return;
         }
