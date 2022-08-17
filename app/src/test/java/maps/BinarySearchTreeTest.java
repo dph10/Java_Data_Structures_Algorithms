@@ -294,6 +294,43 @@ public class BinarySearchTreeTest {
         assertNull(testTree.floor(-1));
     }
     
+    @Test
+    public void testRank() {
+        testTree = new BinarySearchTree<>();
+        buildTree(testTree);
+        
+        assertEquals(7, testTree.rank(10));
+        assertEquals(2, testTree.rank(5));
+        assertEquals(0, testTree.rank(3));
+        
+        assertEquals(14, testTree.rank(20));
+        assertEquals(8, testTree.rank(11));
+        assertEquals(12, testTree.rank(15));
+    }
+    
+    @Test
+    public void testSelect() {
+        testTree = new BinarySearchTree<>();
+        buildTree(testTree);
+        
+        assertEquals(3, testTree.select(0));
+        assertEquals(4, testTree.select(1));
+        assertEquals(5, testTree.select(2));
+        assertEquals(6, testTree.select(3));
+        assertEquals(7, testTree.select(4));
+        assertEquals(8, testTree.select(5));
+        assertEquals(9, testTree.select(6));
+        assertEquals(10, testTree.select(7));
+        assertEquals(11, testTree.select(8));
+        assertEquals(12, testTree.select(9));
+        assertEquals(13, testTree.select(10));
+        assertEquals(14, testTree.select(11));
+        assertEquals(15, testTree.select(12));
+        assertEquals(18, testTree.select(13));
+        assertEquals(20, testTree.select(14));
+        assertEquals(21, testTree.select(15));
+    }
+    
     public <K extends Comparable<K>,V> void assertTreeRecursive(final BinarySearchTree<K,V> checkTree) {        
         assertTreeRecursive(checkTree.getRoot());        
     }

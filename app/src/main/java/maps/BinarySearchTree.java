@@ -259,7 +259,7 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
         return this.get(key)!=null;
     }
     
-    /*@Override
+    @Override
     public int rank(final K keyRank) {        
         return this.rankInternal(this.root, keyRank);        
     }
@@ -269,14 +269,13 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
             return 0;
         }
         final int compareValue = nodeCheck.key.compareTo(keyRank);
-        if (compareValue > 0) return 1+sizeInternal(nodeCheck.leftChildNode) + 
-                rankInternal(nodeCheck.leftChildNode, keyRank);
-        else if (compareValue < 0) return 1 + sizeInternal(nodeCheck.rightChildNode)
+        if (compareValue > 0) return rankInternal(nodeCheck.leftChildNode, keyRank);
+        else if (compareValue < 0) return 1 + sizeInternal(nodeCheck.leftChildNode)
                 + rankInternal(nodeCheck.rightChildNode, keyRank);
         else {
             return sizeInternal(nodeCheck.leftChildNode);
         }
-    }*/
+    }
     
     @Override
     public V remove(final K key) {
@@ -488,6 +487,30 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
         }
         
         return getMaxNode(node.rightChildNode);
+    }
+    
+    @Override
+    public K select(final int rank) {
+        if (root==null) {
+            return null;
+        }
+        
+        return this.selectInternal(this.root, rank);
+    }
+    
+    protected K selectInternal(final Node<K,V> node, final int rank) {
+        if (node == null) {
+            return null;
+        }
+        
+        final int leftSize = sizeInternal(node.leftChildNode);
+        if (leftSize > rank) {
+            return selectInternal(node.leftChildNode, rank);
+        } else if (leftSize < rank) {
+            return selectInternal(node.rightChildNode, rank-leftSize-1);
+        } else {
+            return node.key;
+        }
     }
 
 }

@@ -15,7 +15,7 @@ public interface OrderedMap<K extends Comparable<K>, V> extends MapInterface<K,V
     
     public K max();
     
-    //public int rank(K keyRank);
+    public int rank(K keyRank);
     
     public K ceiling(K key);
     
@@ -27,5 +27,7 @@ public interface OrderedMap<K extends Comparable<K>, V> extends MapInterface<K,V
     public default Iterable<K> keys() {
         return keys(this.min(), this.max());
     }
+    
+    public K select(final int rank);
     
 }
