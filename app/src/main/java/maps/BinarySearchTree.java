@@ -303,18 +303,10 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
         final int compareValue = nodeCheck.key.compareTo(key);
         if (compareValue>0) {
             nodeCheck.leftChildNode = removeInternal(nodeCheck.leftChildNode, key);
-            if (nodeCheck.leftChildNode!=null) {
-                //nodeCheck.leftChildNode.parentNode=nodeCheck;                
-            }
-            nodeCheck.sizeN = 1 + sizeInternal(nodeCheck.leftChildNode) + sizeInternal(nodeCheck.rightChildNode);
-            return nodeCheck;
+            return this.balanceNode(nodeCheck);
         } else if (compareValue < 0) {
             nodeCheck.rightChildNode = removeInternal(nodeCheck.rightChildNode, key);
-            if (nodeCheck.rightChildNode!=null) {
-               // nodeCheck.rightChildNode.parentNode = nodeCheck;
-            }
-            nodeCheck.sizeN = 1 + sizeInternal(nodeCheck.leftChildNode) + sizeInternal(nodeCheck.rightChildNode);
-            return nodeCheck;
+            return this.balanceNode(nodeCheck);
         } else {
             this.lastLookupValue = nodeCheck.value;            
 
@@ -333,9 +325,7 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
             }            
             succesorNode.leftChildNode=nodeCheck.leftChildNode;
             //succesorNode.leftChildNode.parentNode = succesorNode;
-            succesorNode.sizeN = 1 + sizeInternal(succesorNode.leftChildNode) + 
-                    sizeInternal(succesorNode.rightChildNode);
-            return succesorNode;
+            return this.balanceNode(succesorNode);
         }
     }
     
@@ -407,7 +397,7 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
     }    
         
     
-    private Node<K,V> deleteMin(final Node<K,V> node) {
+    private Node<K,V> deleteMin(Node<K,V> node) {
         if (node.leftChildNode==null) {
             // replace this node with its right child 
             //node.parentNode=null;
@@ -416,11 +406,11 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
             return rightChild;
         } else {
             node.leftChildNode = deleteMin(node.leftChildNode);
-            if (node.leftChildNode!=null) {
+            /*if (node.leftChildNode!=null) {
             //    node.leftChildNode.parentNode = node;
-            }
+            }*/
             
-            node.sizeN = sizeInternal(node.leftChildNode) + sizeInternal(node.rightChildNode)+1;
+            node = this.balanceNode(node);
             return node;
         }
     }
