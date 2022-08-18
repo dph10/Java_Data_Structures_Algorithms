@@ -26,27 +26,28 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
         
         private final V value;
         private final K key;
-        
+        private boolean color;
         private Node<K,V> leftChildNode;  // subtree for children less than this node's key
         private Node<K,V> rightChildNode; // subtree for children greater than this node's key
-        private Node<K,V> parentNode;
+        //private Node<K,V> parentNode;
         
         private int sizeN = 1;
         
-        protected Node(final K key, final V value, final Node<K,V> parentNode) {
+        protected Node(final K key, final V value, final boolean isRed) {
             this.key = key;
             this.value = value;
             if (this.key==null || this.value == null) {
                 throw new IllegalArgumentException("Keys and values must not be null");
             }
-            this.parentNode = parentNode;
+            this.color = isRed;
+            /*this.parentNode = parentNode;
             if (this.parentNode!=null) {
                 if (this.key.compareTo(parentNode.key) < 0) {
                     parentNode.leftChildNode=this;
                 } else {
                     parentNode.rightChildNode=this;
                 }
-            }
+            }*/
         }
 
         protected K getKey() {
@@ -56,10 +57,14 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
         protected V getValue() {
             return value;
         }
-
-        protected Node<K,V> getParentNode() {
-            return parentNode;
+        
+        protected boolean getIsRed() {
+            return this.color;
         }
+
+        /*protected Node<K,V> getParentNode() {
+            return parentNode;
+        }*/
 
         protected Node<K,V> getLeftChildNode() {
             return leftChildNode;
@@ -124,6 +129,40 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
         return sizeInternal(root);
     }
     
+    protected static boolean getIsRed(final Node node) {
+        if (node==null) return false;
+        return node.getIsRed();
+    }
+    
+    protected void flipColors(final Node<K,V> node) {
+        node.color = !node.color;
+        node.leftChildNode.color = !node.leftChildNode.color;
+        node.rightChildNode.color = !node.rightChildNode.color;
+    }
+    
+    protected Node<K,V> rotateLeft(final Node<K,V> h) {
+        final Node<K,V> xNode = h.rightChildNode;        
+        h.rightChildNode =xNode.leftChildNode;
+        xNode.leftChildNode = h;
+        xNode.color = h.color;
+        h.color = true;
+        xNode.sizeN = h.sizeN;
+        h.sizeN = 1 +sizeInternal(h.leftChildNode) + sizeInternal(h.rightChildNode);
+        return xNode;
+    }
+    
+    protected Node<K,V> rotatedRight(final Node<K,V> h) {
+        final Node<K,V> xNode = h.leftChildNode;
+        h.leftChildNode = xNode.rightChildNode;
+        xNode.rightChildNode = h;
+        
+        xNode.color = h.color;
+        h.color = true;
+        xNode.sizeN = h.sizeN;
+        h.sizeN = 1 + sizeInternal(h.leftChildNode) + sizeInternal(h.rightChildNode);
+        return xNode;
+    }
+    
     protected int sizeInternal(final Node<K,V> checkNode) {
         if (checkNode==null) {
             return 0;
@@ -139,90 +178,59 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
         }
         this.lastLookupValue=null;        
         this.root = this.putInternal(root, key, value, true);
-        
+        this.root.color = false;
         return this.lastLookupValue;
+    }
+    
+    protected Node<K, V> balanceNode(Node<K, V> checkNode) {
+        if (getIsRed(checkNode.rightChildNode) && !getIsRed(checkNode.leftChildNode)) {
+            checkNode = rotateLeft(checkNode);
+        }
+        if (checkNode.leftChildNode!=null && getIsRed(checkNode.leftChildNode) && getIsRed(checkNode.leftChildNode.leftChildNode)) {
+            checkNode = rotatedRight(checkNode);
+        }
+        if (getIsRed(checkNode.leftChildNode) && getIsRed(checkNode.rightChildNode)) {
+            flipColors(checkNode);
+        }
+        checkNode.sizeN = sizeInternal(checkNode.leftChildNode) + sizeInternal(checkNode.rightChildNode)+1;
+        return checkNode;
     }
     
     protected Node<K,V> putInternal(final Node<K,V> checkNode, final K key, final V value, final boolean overwrite) {
         
         if (checkNode==null) {
-            return new Node(key, value, null);
+            return new Node(key, value, true);
         }
         
         final int compareValue = checkNode.key.compareTo(key);
         if (compareValue > 0) {
             checkNode.leftChildNode = putInternal(checkNode.leftChildNode, key, value, overwrite);
-            checkNode.leftChildNode.parentNode = checkNode;
-            checkNode.sizeN = sizeInternal(checkNode.leftChildNode) + sizeInternal(checkNode.rightChildNode)+1;
-            return checkNode;
+            return balanceNode(checkNode);
         } else if (compareValue < 0) {
             checkNode.rightChildNode = putInternal(checkNode.rightChildNode, key, value, overwrite);
-            checkNode.rightChildNode.parentNode = checkNode;
-            checkNode.sizeN = sizeInternal(checkNode.leftChildNode) + sizeInternal(checkNode.rightChildNode)+1;
-            return checkNode;
+            return balanceNode(checkNode);
         } else {
             this.lastLookupValue = checkNode.value;
             if (overwrite) {
-                final Node<K, V> newNode = new Node<>(key, value, checkNode.parentNode);
+                final Node<K, V> newNode = new Node<>(key, value, checkNode.color);
                 newNode.sizeN = checkNode.sizeN;
                 newNode.leftChildNode = checkNode.leftChildNode;
                 newNode.rightChildNode = checkNode.rightChildNode;
-                if (newNode.leftChildNode != null) {
-                    newNode.leftChildNode.parentNode = newNode;
+                /*if (newNode.leftChildNode != null) {
+                    //newNode.leftChildNode.parentNode = newNode;
                 }
                 if (newNode.rightChildNode != null) {
-                    newNode.rightChildNode.parentNode = newNode;
-                }
-
-                return newNode;
+                   // newNode.rightChildNode.parentNode = newNode;
+                }*/
+                return balanceNode(newNode);
             } else {
                 return checkNode;
             }
         }
         
-    }
-
-    /*@Override
-    public V put(final K key, final V value) {
-        if (key==null || value==null) {
-            throw new IllegalArgumentException("Keys and values must not be null");
-        }
         
-        return this.putInternal(root, key, value, null, true);
         
     }
-    
-    private V putInternal(final Node<K, V> node, final K key, final V val, final Node<K, V> parentNode, final boolean overwrite) {
-
-        if (node == null) {
-            final Node<K, V> newNode = new Node<>(key, val, parentNode);
-            this.size++;
-            return null;
-        }
-        final int compareVal = node.key.compareTo(key);
-
-        if (compareVal > 0) {
-            return (V) putInternal(node.rightChildNode, key, val, node, overwrite);
-        } else if (compareVal < 0) {
-            return (V) putInternal(node.leftChildNode, key, val, node, overwrite);
-        } else {
-            if (overwrite) {
-                final Node<K, V> newNode = new Node<>(key, val, parentNode);
-                newNode.leftChildNode = node.leftChildNode;
-                newNode.rightChildNode = node.rightChildNode;
-
-                if (newNode.leftChildNode != null) {
-                    newNode.leftChildNode.parentNode = newNode;
-                }
-                if (newNode.rightChildNode != null) {
-                    newNode.rightChildNode.parentNode = newNode;
-                }
-
-            }
-            return node.value;
-        }
-
-    }*/
 
     @Override
     public V putIfAbsent(K key, V value) {
@@ -296,14 +304,14 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
         if (compareValue>0) {
             nodeCheck.leftChildNode = removeInternal(nodeCheck.leftChildNode, key);
             if (nodeCheck.leftChildNode!=null) {
-                nodeCheck.leftChildNode.parentNode=nodeCheck;                
+                //nodeCheck.leftChildNode.parentNode=nodeCheck;                
             }
             nodeCheck.sizeN = 1 + sizeInternal(nodeCheck.leftChildNode) + sizeInternal(nodeCheck.rightChildNode);
             return nodeCheck;
         } else if (compareValue < 0) {
             nodeCheck.rightChildNode = removeInternal(nodeCheck.rightChildNode, key);
             if (nodeCheck.rightChildNode!=null) {
-                nodeCheck.rightChildNode.parentNode = nodeCheck;
+               // nodeCheck.rightChildNode.parentNode = nodeCheck;
             }
             nodeCheck.sizeN = 1 + sizeInternal(nodeCheck.leftChildNode) + sizeInternal(nodeCheck.rightChildNode);
             return nodeCheck;
@@ -321,10 +329,10 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
             
             succesorNode.rightChildNode = deleteMin(nodeCheck.rightChildNode);
             if (succesorNode.rightChildNode!=null) {
-                succesorNode.rightChildNode.parentNode=succesorNode;
+                //succesorNode.rightChildNode.parentNode=succesorNode;
             }            
             succesorNode.leftChildNode=nodeCheck.leftChildNode;
-            succesorNode.leftChildNode.parentNode = succesorNode;
+            //succesorNode.leftChildNode.parentNode = succesorNode;
             succesorNode.sizeN = 1 + sizeInternal(succesorNode.leftChildNode) + 
                     sizeInternal(succesorNode.rightChildNode);
             return succesorNode;
@@ -398,17 +406,18 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
         return getMinNode(root).key;
     }    
         
+    
     private Node<K,V> deleteMin(final Node<K,V> node) {
         if (node.leftChildNode==null) {
             // replace this node with its right child 
-            node.parentNode=null;
+            //node.parentNode=null;
             final var rightChild = node.rightChildNode;
             node.rightChildNode=null;
             return rightChild;
         } else {
             node.leftChildNode = deleteMin(node.leftChildNode);
             if (node.leftChildNode!=null) {
-                node.leftChildNode.parentNode = node;
+            //    node.leftChildNode.parentNode = node;
             }
             
             node.sizeN = sizeInternal(node.leftChildNode) + sizeInternal(node.rightChildNode)+1;
@@ -465,14 +474,14 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
         
         if (node.rightChildNode==null) {
             final var leftChild = node.leftChildNode;
-            node.parentNode=null;
+           // node.parentNode=null;
             node.leftChildNode=null;
             
             return leftChild;
         } else {
             node.rightChildNode = deleteMax(node.rightChildNode);
             if (node.rightChildNode!=null) {
-                node.rightChildNode.parentNode = node;
+            //    node.rightChildNode.parentNode = node;
             }
             
             node.sizeN = sizeInternal(node.leftChildNode) + sizeInternal(node.rightChildNode)+1;
