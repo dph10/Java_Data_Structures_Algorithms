@@ -171,4 +171,92 @@ public interface ListInterface<T> extends StackInterface<T>, Iterable<T>{
         array[ii] = array[jj];
         array[jj]=val;
     }
+    
+    public static void SelectionSort(final Comparable[] array) {
+        
+        for (int ii=0; ii<array.length; ii++) {
+            
+            int currentMin = ii;
+            
+            for (int jj= ii+1; jj<array.length; jj++) {                
+                if (less(array[jj], array[currentMin])) {
+                    currentMin = jj;
+                }                
+            }            
+            exchange(array, ii, currentMin);            
+        }
+        
+    }
+    
+    public static void InsertionSort(final Comparable[] array) {
+        final int secondIntCheck = array.length-1;
+        for (int ii=1; ii<array.length; ii++) {
+
+            if (ii < secondIntCheck) {
+                final Comparable currentVal = array[ii];
+                int checkIndex = ii;
+                boolean testVal = false;
+                while(++checkIndex < array.length) {
+                    testVal = less(array[checkIndex], currentVal);
+                    if (testVal) {
+                        array[checkIndex-1]=array[checkIndex];
+                    } else {
+                        break;
+                    }
+                }
+                if (testVal) {
+                    array[checkIndex-1] = currentVal;
+                }
+            }
+            
+            final Comparable currentVal = array[ii];
+            
+            /*for (int jj = ii; jj>0; jj--) {
+                if (less(array[jj], array[jj-1])) {
+                    exchange(array, jj-1, jj);
+                } else {
+                    break;
+                }
+                if (jj==0) {
+                    break;
+                }
+            }*/
+            boolean testVal = false;
+            for (int jj = ii-1; jj>=0; jj--) {
+                
+                testVal = less(currentVal, array[jj]);
+                if (testVal) {
+                    array[jj+1] = array[jj];
+                } else {
+                    array[jj+1] =  currentVal;
+                    break;
+                }     
+                
+                if (jj==0 && testVal) {
+                    array[0] = currentVal;
+                }
+
+            }            
+            
+        }        
+    }
+    
+    public static void ShellSort(final Comparable[] array) {
+        final int N = array.length;
+        
+        int h = 1;
+
+        while (h < N / 3) { // 1, 4, 13, 40, 121, 364, 1093, ....
+            h = 3 * h + 1;
+        }
+        
+        while (h >=1) {
+            for (int ii=h; ii<N; ii++) {
+                for (int jj=ii; jj >= h && less(array[jj], array[jj-h]); jj-=h) {
+                    exchange(array, jj, jj-h);
+                }
+            }
+            h = h/3;
+        }
+    }
 }
