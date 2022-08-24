@@ -140,4 +140,35 @@ public interface ListInterface<T> extends StackInterface<T>, Iterable<T>{
         return solution;
 
     }
+    
+    public static <T extends Comparable<T>> boolean less(final T a, final T b) {
+        return a.compareTo(b) < 0;
+    }
+    
+    public static <T extends Comparable<T>> boolean isSorted(final ListInterface<T> list) {
+        
+        for (int ii=1; ii< list.length(); ii++) {
+            if (less(list.get(ii), list.get(ii-1))) return false;
+        }
+        return true;        
+    }
+    
+    public static boolean isSorted(final Comparable[] array) {
+        for (int ii=1; ii<array.length; ii++) {
+            if (less(array[ii], array[ii-1])) return false;
+        }
+        return true;
+    }
+    
+    public static <T extends Comparable<T>> void exchange(final ListInterface<T> list, final int ii, final int jj) {
+        final T val = list.get(ii);
+        list.add(list.get(jj), ii);
+        list.add(val,jj);
+    }
+    
+    public static void exchange(final Comparable[] array, final int ii, final int jj) {
+        final Comparable val = array[ii];
+        array[ii] = array[jj];
+        array[jj]=val;
+    }
 }

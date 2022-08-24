@@ -408,8 +408,10 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements OrderedMap<
             node.leftChildNode = deleteMin(node.leftChildNode);
             /*if (node.leftChildNode!=null) {
             //    node.leftChildNode.parentNode = node;
+            }*/            
+            /*if (getIsRed(node.rightChildNode)) {
+                node = rotateLeft(node);
             }*/
-            
             node = this.balanceNode(node);
             return node;
         }

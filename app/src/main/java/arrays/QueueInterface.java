@@ -12,7 +12,9 @@ public interface QueueInterface<T> {
     
     public boolean add(final T el);
     
-    public boolean isEmpty();
+    public default boolean isEmpty() {
+        return this.length()==0;
+    }
     
     public T deQueue();
     
